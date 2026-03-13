@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Pre-Safe — Driver Pre-Trip Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  window.addEventListener('load', function(){
+    emailjs.init({ publicKey: 'Ofa1FVlJM68sVx9D8' });
+  });
+</script>
+<style>
+  :root[data-theme="dark"] {
+    --bg:#0a0a0a;--bg2:#141414;--bg3:#1c1c1c;--border:#2e2e2e;--border2:#3a3a3a;
+    --text:#ffffff;--text2:#a0a0a0;--text3:#666666;
+    --red:#ff4444;--green:#44ff88;
+    --tag-cr-bg:rgba(255,68,68,0.1);--tag-cr-b:rgba(255,68,68,0.35);--tag-cr-t:#ff7070;
+    --tag-st-bg:rgba(255,255,255,0.05);--tag-st-b:rgba(255,255,255,0.2);--tag-st-t:#a0a0a0;
+    --shadow:0 1px 0 rgba(255,255,255,0.04);--input-bg:#1c1c1c;
+    --call-bg:#ffffff;--call-text:#000000;--call-sh:0 4px 24px rgba(255,255,255,0.1);
+  }
+  :root[data-theme="light"] {
+    --bg:#ffffff;--bg2:#f5f5f5;--bg3:#eeeeee;--border:#e0e0e0;--border2:#cccccc;
+    --text:#000000;--text2:#555555;--text3:#999999;
+    --red:#cc0000;--green:#007722;
+    --tag-cr-bg:rgba(204,0,0,0.07);--tag-cr-b:rgba(204,0,0,0.3);--tag-cr-t:#cc0000;
+    --tag-st-bg:rgba(0,0,0,0.04);--tag-st-b:rgba(0,0,0,0.15);--tag-st-t:#555555;
+    --shadow:0 1px 0 rgba(0,0,0,0.06);--input-bg:#f5f5f5;
+    --call-bg:#000000;--call-text:#ffffff;--call-sh:0 4px 24px rgba(0,0,0,0.15);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+  .header{background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;transition:background .25s,border-color .25s}
+  .header-top{padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+  .hname{font-size:22px;font-weight:900;letter-spacing:-0.5px;color:var(--text);cursor:pointer;text-decoration:none;transition:opacity .2s}
+  .hname:hover{opacity:.6}
+  .hsub{font-size:11px;color:var(--text3);font-weight:500;letter-spacing:.5px;margin-left:8px}
+  .toggle{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:100px;padding:6px 14px;cursor:pointer;transition:all .2s;user-select:none;touch-action:manipulation}
+  .toggle:hover{border-color:var(--border2)}
+  .ticon{font-size:15px;line-height:1}
+  .tlbl{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.3px}
+  .navbar{display:flex;gap:10px;padding:10px 16px 12px;border-top:1px solid var(--border);transition:border-color .25s}
+  .nav-home{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 18px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.3px;color:var(--text2);background:none;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;touch-action:manipulation}
+  .nav-home:hover,.nav-home:active{background:var(--bg3);color:var(--text);border-color:var(--border2)}
+  .nav-call{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg3);color:var(--text);text-decoration:none;border-radius:10px;padding:11px 16px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;letter-spacing:.3px;transition:all .2s;touch-action:manipulation;border:1.5px solid var(--border2)}
+  .nav-call:hover,.nav-call:active{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .wrap{max-width:600px;margin:0 auto;padding:24px 16px 110px}
+  .steps{display:flex;gap:6px;margin-bottom:24px}
+  .step{flex:1;height:3px;border-radius:3px;background:var(--border);transition:background .3s}
+  .step.done{background:var(--text)}.step.active{background:var(--text2)}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;transition:background .25s,border-color .25s;box-shadow:var(--shadow)}
+  .clbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text3);margin-bottom:12px}
+  .sw{position:relative}
+  .si{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;opacity:.4}
+  .sinput{width:100%;padding:14px 14px 14px 42px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:16px;font-family:'Inter',sans-serif;font-weight:500;outline:none;transition:border-color .2s,background .25s;-webkit-appearance:none}
+  .sinput:focus{border-color:var(--text)}.sinput::placeholder{color:var(--text3)}
+  .vlist{margin-top:8px;display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto}
+  .vi{padding:13px 16px;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s;font-weight:600;font-size:15px;color:var(--text);touch-action:manipulation}
+  .vi:hover,.vi:active{border-color:var(--text);background:var(--bg)}
+  .vico{font-size:20px}.vmeta{font-size:11px;color:var(--text3);font-weight:400}
+  .selv{display:none;align-items:center;gap:14px;padding:16px;background:var(--bg3);border:1.5px solid var(--text);border-radius:12px}
+  .selv.show{display:flex}
+  .svico{font-size:32px}.svinfo{flex:1}.svnum{font-size:20px;font-weight:800;letter-spacing:-.3px}.svtype{font-size:12px;color:var(--text3);font-weight:500;margin-top:2px}
+  .chgbtn{background:none;border:1.5px solid var(--border);color:var(--text3);padding:7px 13px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;touch-action:manipulation}
+  .chgbtn:hover{border-color:var(--text);color:var(--text)}
+  .tinput{width:100%;padding:14px 16px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:16px;font-family:'Inter',sans-serif;font-weight:500;outline:none;transition:border-color .2s,background .25s;-webkit-appearance:none}
+  .tinput:focus{border-color:var(--text)}.tinput::placeholder{color:var(--text3)}
+  .stag{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+  .tcr{background:var(--tag-cr-bg);border:1px solid var(--tag-cr-b);color:var(--tag-cr-t)}
+  .tst{background:var(--tag-st-bg);border:1px solid var(--tag-st-b);color:var(--tag-st-t)}
+  .snote{font-size:13px;color:var(--text3);margin-bottom:20px;line-height:1.55}
+  .snote em{color:var(--tag-cr-t);font-style:normal;font-weight:600}
+  .ci{border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-bottom:10px;transition:border-color .2s,background .2s;background:transparent}
+  .ci.flagged{border-color:var(--red);background:var(--tag-cr-bg)}.ci.cleared{border-color:var(--border2);background:var(--bg3)}
+  .ciq{font-size:17px;font-weight:600;line-height:1.45;color:var(--text);margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+  .qn{flex-shrink:0;font-size:10px;font-weight:700;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 7px;margin-top:3px;letter-spacing:.5px;font-family:'Inter',sans-serif}
+  .brow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .yn{padding:20px 12px;border:2px solid var(--border);border-radius:12px;font-family:'Inter',sans-serif;font-size:26px;font-weight:900;letter-spacing:2px;cursor:pointer;background:var(--bg3);color:var(--text3);transition:all .15s;text-transform:uppercase;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent}
+  .yn:hover{border-color:var(--text);color:var(--text);background:var(--bg2)}
+  .yn.ay,.yn.an{background:var(--text);border-color:var(--text);color:var(--bg)}
+  .subq{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+  .subq.show{display:block}
+  .subqt{font-size:14px;font-weight:500;color:var(--text2);margin-bottom:12px;line-height:1.5;padding-left:14px;border-left:2px solid var(--border2)}
+  .cral{display:none;align-items:flex-start;gap:14px;padding:18px;background:var(--tag-cr-bg);border:1.5px solid var(--tag-cr-b);border-radius:14px;margin-bottom:12px}
+  .cral.show{display:flex}
+  .crali{font-size:22px;flex-shrink:0;margin-top:1px}
+  .cralt{font-size:14px;line-height:1.55;color:var(--text2)}
+  .cralt strong{display:block;font-size:15px;font-weight:700;color:var(--tag-cr-t);margin-bottom:4px}
+  .pw{background:var(--bg3);border-radius:4px;height:4px;margin-bottom:16px;overflow:hidden}
+  .pb{height:100%;background:var(--text);border-radius:4px;transition:width .4s ease;width:0%}
+  .plbl{font-size:11px;color:var(--text3);font-weight:500;margin-bottom:8px;text-align:right;letter-spacing:.3px}
+  .subbtn{width:100%;padding:20px;background:var(--text);border:none;border-radius:14px;color:var(--bg);font-family:'Inter',sans-serif;font-size:16px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity .2s,transform .15s;touch-action:manipulation}
+  .subbtn:hover:not(:disabled){opacity:.88;transform:translateY(-1px)}.subbtn:disabled{opacity:.2;cursor:not-allowed}
+  .succ{display:none;padding:60px 20px 40px;text-align:center}
+  .succ.show{display:block}
+  .sico{font-size:60px;margin-bottom:20px}
+  .stit{font-size:30px;font-weight:900;letter-spacing:-.5px;margin-bottom:8px}
+  .ssub{font-size:15px;color:var(--text3);line-height:1.6;margin-bottom:28px}
+  .sflag{background:var(--tag-cr-bg);border:1px solid var(--tag-cr-b);border-radius:12px;padding:16px;font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:24px;text-align:left}
+  .sflag strong{color:var(--tag-cr-t);display:block;margin-bottom:6px;font-weight:700}
+  .rbtn{padding:15px 32px;background:none;border:1.5px solid var(--border);color:var(--text);border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .2s;touch-action:manipulation}
+  .rbtn:hover{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .foot{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);padding:12px 16px;z-index:200;transition:background .25s,border-color .25s}
+  .cbtn{display:flex;align-items:center;justify-content:center;width:100%;background:var(--bg3);color:var(--text);text-decoration:none;border-radius:12px;padding:16px 20px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;letter-spacing:.3px;transition:all .2s;touch-action:manipulation;border:1.5px solid var(--border2)}
+  .cbtn:hover,.cbtn:active{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .vlist::-webkit-scrollbar{width:3px}.vlist::-webkit-scrollbar-track{background:transparent}.vlist::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+  #nonCritCard{transition:opacity .3s,background .25s,border-color .25s;position:relative}
+  #nonCritCard.frozen{opacity:.35;pointer-events:none;user-select:none}
+  .frozen-msg{display:none;text-align:center;padding:12px 16px;background:var(--tag-cr-bg);border:1.5px solid var(--tag-cr-b);border-radius:12px;font-size:13px;font-weight:600;color:var(--tag-cr-t);margin-bottom:12px;letter-spacing:.2px}
+  .frozen-msg.show{display:block}
+  @media(min-width:480px){.yn{font-size:30px;padding:24px 16px}.ciq{font-size:18px}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <div>
+      <span class="hname" onclick="goHome()">Pre-Safe</span>
+      <span class="hsub">Pre-Trip Check</span>
+    </div>
+    <div class="toggle" onclick="toggleTheme()" id="toggleBtn">
+      <span class="tlbl" id="tlbl">Light</span>
+    </div>
+  </div>
+  <nav class="navbar">
+    <button class="nav-home" onclick="goHome()">Home</button>
+    <a href="tel:2122601453" class="nav-call">Call Dispatch &nbsp;·&nbsp; 212-260-1453</a>
+  </nav>
+</header>
+
+<div class="wrap" id="mainApp">
+  <div class="steps">
+    <div class="step active" id="s1"></div>
+    <div class="step" id="s2"></div>
+    <div class="step" id="s3"></div>
+  </div>
+
+  <!-- VEHICLE -->
+  <div class="card">
+    <div class="clbl">Vehicle</div>
+    <div id="vSW">
+      <div class="sw">
+        <span class="si">🔍</span>
+        <input class="sinput" id="vSearch" type="text" placeholder="Search vehicle number..." autocomplete="off" />
+      </div>
+      <div class="vlist" id="vList"></div>
+    </div>
+    <div class="selv" id="selV">
+      <div class="svinfo">
+        <div class="svnum" id="svNum">—</div>
+        <div class="svtype" id="svType">—</div>
+      </div>
+      <button class="chgbtn" onclick="changeV()">Change</button>
+    </div>
+  </div>
+
+  <!-- DRIVER -->
+  <div class="card">
+    <div class="clbl">Driver</div>
+    <input class="tinput" id="dName" type="text" placeholder="Your full name..." />
+  </div>
+
+  <!-- CHECKLIST -->
+  <div id="clf" style="display:none">
+
+    <div class="card">
+      <div class="stag tcr">⚠ Critical — Safety</div>
+      <p class="snote"><em>Any flag below alerts Dispatch immediately.</em> Answer honestly.</p>
+
+      <div class="ci" id="ci-c1">
+        <div class="ciq"><span class="qn">C1</span>Are you feeling good and okay to drive during this shift?</div>
+        <div class="brow"><button class="yn" onclick="ans('c1','yes',this)">YES</button><button class="yn" onclick="ans('c1','no',this)">NO</button></div>
+      </div>
+      <div class="ci" id="ci-c2">
+        <div class="ciq"><span class="qn">C2</span>Are you intoxicated?</div>
+        <div class="brow"><button class="yn" onclick="ans('c2','yes',this)">YES</button><button class="yn" onclick="ans('c2','no',this)">NO</button></div>
+      </div>
+      <div class="ci" id="ci-c3">
+        <div class="ciq"><span class="qn">C3</span>Are you under the influence and not in a condition to drive?</div>
+        <div class="brow"><button class="yn" onclick="ans('c3','yes',this)">YES</button><button class="yn" onclick="ans('c3','no',this)">NO</button></div>
+      </div>
+    </div>
+
+    <div class="cral" id="crAlert">
+      <span class="crali">⚠️</span>
+      <div class="cralt"><strong>Safety Flag Detected</strong>An alert will be sent to Dispatch on submit. Do not depart — contact dispatch now.</div>
+    </div>
+
+    <div class="frozen-msg" id="frozenMsg">⛔ Critical flag detected — equipment check skipped. Submit to alert dispatch.</div>
+    <div class="card" id="nonCritCard">
+      <div class="stag tst">✓ Equipment &amp; Vehicle Check</div>
+      <p class="snote">Complete all items before departure. Issues are logged for the operations team.</p>
+
+      <div class="ci" id="ci-n1">
+        <div class="ciq"><span class="qn">N1</span>Do you have the correct equipment/gear to conduct all your jobs successfully?</div>
+        <div class="brow"><button class="yn" onclick="ans('n1','yes',this)">YES</button><button class="yn" onclick="ans('n1','no',this)">NO</button></div>
+      </div>
+      <div class="ci" id="ci-n2">
+        <div class="ciq"><span class="qn">N2</span>Do you require a hand truck for today's jobs?</div>
+        <div class="brow"><button class="yn" onclick="ans('n2','yes',this)">YES</button><button class="yn" onclick="ans('n2','no',this)">NO</button></div>
+        <div class="subq" id="sub-n2"><div class="subqt">Do you have the hand truck loaded in the vehicle?</div><div class="brow"><button class="yn" onclick="ans('n2b','yes',this)">YES</button><button class="yn" onclick="ans('n2b','no',this)">NO</button></div></div>
+      </div>
+      <div class="ci" id="ci-n3">
+        <div class="ciq"><span class="qn">N3</span>Do you require a specimen bag for today's jobs?</div>
+        <div class="brow"><button class="yn" onclick="ans('n3','yes',this)">YES</button><button class="yn" onclick="ans('n3','no',this)">NO</button></div>
+        <div class="subq" id="sub-n3"><div class="subqt">Do you have the specimen bag in the vehicle?</div><div class="brow"><button class="yn" onclick="ans('n3b','yes',this)">YES</button><button class="yn" onclick="ans('n3b','no',this)">NO</button></div></div>
+      </div>
+      <div class="ci" id="ci-n4">
+        <div class="ciq"><span class="qn">N4</span>Do you need a pallet jack for today's jobs?</div>
+        <div class="brow"><button class="yn" onclick="ans('n4','yes',this)">YES</button><button class="yn" onclick="ans('n4','no',this)">NO</button></div>
+        <div class="subq" id="sub-n4"><div class="subqt">Do you have the pallet jack loaded in the vehicle?</div><div class="brow"><button class="yn" onclick="ans('n4b','yes',this)">YES</button><button class="yn" onclick="ans('n4b','no',this)">NO</button></div></div>
+      </div>
+      <div class="ci" id="ci-n5">
+        <div class="ciq"><span class="qn">N5</span>Are the doors closing properly and is the vehicle safe to drive?</div>
+        <div class="brow"><button class="yn" onclick="ans('n5','yes',this)">YES</button><button class="yn" onclick="ans('n5','no',this)">NO</button></div>
+      </div>
+      <div class="ci" id="ci-n6">
+        <div class="ciq"><span class="qn">N6</span>Does the vehicle smell from inside?</div>
+        <div class="brow"><button class="yn" onclick="ans('n6','yes',this)">YES</button><button class="yn" onclick="ans('n6','no',this)">NO</button></div>
+      </div>
+      <div class="ci" id="ci-n7">
+        <div class="ciq"><span class="qn">N7</span>Is the vehicle clean and presentable?</div>
+        <div class="brow"><button class="yn" onclick="ans('n7','yes',this)">YES</button><button class="yn" onclick="ans('n7','no',this)">NO</button></div>
+      </div>
+      <div class="ci" id="ci-n8">
+        <div class="ciq"><span class="qn">N8</span>Are there any leaks visible on or under the vehicle?</div>
+        <div class="brow"><button class="yn" onclick="ans('n8','yes',this)">YES</button><button class="yn" onclick="ans('n8','no',this)">NO</button></div>
+      </div>
+    </div>
+
+    <div class="plbl" id="plbl">0 / 11 completed</div>
+    <div class="pw"><div class="pb" id="pb"></div></div>
+    <button class="subbtn" id="subBtn" onclick="submitForm()" disabled>Submit Checklist</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="succ" id="succScr">
+    <div class="sico" id="sico">✅</div>
+    <div class="stit" id="stit">All Clear</div>
+    <div class="ssub" id="ssub">Pre-trip inspection complete.</div>
+    <div class="sflag" id="sflag" style="display:none"></div>
+    <button class="rbtn" onclick="reset()">Start New Checklist</button>
+  </div>
+</div>
+
+<div class="foot">
+  <a href="tel:2122601453" class="cbtn">Call Dispatch &nbsp;·&nbsp; 212-260-1453</a>
+</div>
+
+<script>
+let dark=true;
+function toggleTheme(){
+  dark=!dark;
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+  document.getElementById('tlbl').textContent=dark?'Light':'Dark';
+}
+function goHome(){ reset(); }
+
+const FLEET=[
+  {num:'Liftgate Truck 1453',type:'Liftgate Truck',icon:'🚛'},
+  {num:'Liftgate Truck 2774',type:'Liftgate Truck',icon:'🚛'},
+  {num:'Liftgate Truck 9733',type:'Liftgate Truck',icon:'🚛'},
+  {num:'Van 6',type:'Van',icon:'🚐'},{num:'Van 7',type:'Van',icon:'🚐'},
+  {num:'Van 8',type:'Van',icon:'🚐'},{num:'Van 9',type:'Van',icon:'🚐'},
+  {num:'Van 10',type:'Van',icon:'🚐'},{num:'Van 11',type:'Van',icon:'🚐'},
+  {num:'Van 13',type:'Van',icon:'🚐'},{num:'Van 14',type:'Van',icon:'🚐'},
+  {num:'Van 15',type:'Van',icon:'🚐'},{num:'Van 16',type:'Van',icon:'🚐'},
+  {num:'Van 17',type:'Van',icon:'🚐'},{num:'Van 19',type:'Van',icon:'🚐'},
+  {num:'Van 20',type:'Van',icon:'🚐'},{num:'Van 21',type:'Van',icon:'🚐'},
+  {num:'Van 22',type:'Van',icon:'🚐'},{num:'Van 23',type:'Van',icon:'🚐'},
+  {num:'Van 24',type:'Van',icon:'🚐'},{num:'Van 25',type:'Van',icon:'🚐'},
+  {num:'Van 26',type:'Van',icon:'🚐'},{num:'Van 27',type:'Van',icon:'🚐'},
+  {num:'Van 28',type:'Van',icon:'🚐'},{num:'Van 29',type:'Van',icon:'🚐'},
+  {num:'Van 30',type:'Van',icon:'🚐'},{num:'Van 31',type:'Van',icon:'🚐'},
+  {num:'Van 32',type:'Van',icon:'🚐'},{num:'Van 33',type:'Van',icon:'🚐'},
+  {num:'Van 34',type:'Van',icon:'🚐'},{num:'Van 35',type:'Van',icon:'🚐'},
+  {num:'Van 36',type:'Van',icon:'🚐'},{num:'Van 37',type:'Van',icon:'🚐'},
+  {num:'Van 38',type:'Van',icon:'🚐'},
+];
+let vehicle=null,answers={};
+const REQ=['c1','c2','c3','n1','n2','n3','n4','n5','n6','n7','n8'];
+
+const vs=document.getElementById('vSearch'),vl=document.getElementById('vList');
+function renderFleet(q=''){
+  vl.innerHTML='';
+  FLEET.filter(v=>!q||v.num.toLowerCase().includes(q.toLowerCase())||v.type.toLowerCase().includes(q.toLowerCase()))
+    .forEach(v=>{const d=document.createElement('div');d.className='vi';d.innerHTML=`<div><div>${v.num}</div><div class="vmeta">${v.type}</div></div>`;d.onclick=()=>pickV(v);vl.appendChild(d);});
+}
+renderFleet();
+vs.addEventListener('input',()=>renderFleet(vs.value));
+
+function pickV(v){
+  vehicle=v;
+  document.getElementById('svNum').textContent=v.num;
+  document.getElementById('svType').textContent=v.type;
+  document.getElementById('vSW').style.display='none';
+  document.getElementById('selV').classList.add('show');
+  ss(1,'done');ss(2,'active');maybeShow();
+}
+function changeV(){
+  vehicle=null;
+  document.getElementById('vSW').style.display='';
+  document.getElementById('selV').classList.remove('show');
+  vs.value='';renderFleet();ss(1,'active');ss(2,'');
+}
+document.getElementById('dName').addEventListener('input',maybeShow);
+function maybeShow(){if(vehicle&&document.getElementById('dName').value.trim().length>1){document.getElementById('clf').style.display='';ss(2,'done');ss(3,'active');}}
+function ss(n,st){const e=document.getElementById('s'+n);e.className='step'+(st?' '+st:'');}
+
+function ans(key,val,btn){
+  answers[key]=val;
+  const row=btn.closest('.brow');
+  row.querySelectorAll('.yn').forEach(b=>b.classList.remove('ay','an'));
+  btn.classList.add(val==='yes'?'ay':'an');
+  if(['n2','n3','n4'].includes(key)){
+    const sub=document.getElementById('sub-'+key);
+    if(val==='yes')sub.classList.add('show');
+    else{sub.classList.remove('show');delete answers[key+'b'];sub.querySelectorAll('.yn').forEach(b=>b.classList.remove('ay','an'));}
+  }
+  const card=btn.closest('.ci');
+  card.classList.remove('flagged','cleared');
+  card.classList.add(isBad(key,val)?'flagged':'cleared');
+  updAlert();updProg();updSub();
+}
+function isBad(k,v){
+  if(k==='c1')return v==='no';if(k==='c2')return v==='yes';if(k==='c3')return v==='yes';
+  if(k==='n1')return v==='no';if(k==='n2b')return v==='no';if(k==='n3b')return v==='no';
+  if(k==='n4b')return v==='no';if(k==='n5')return v==='no';if(k==='n6')return v==='yes';
+  if(k==='n7')return v==='no';if(k==='n8')return v==='yes';return false;
+}
+function hasCrit(){return answers['c1']==='no'||answers['c2']==='yes'||answers['c3']==='yes';}
+function updAlert(){
+  const crit=hasCrit();
+  document.getElementById('crAlert').classList.toggle('show',crit);
+  document.getElementById('nonCritCard').classList.toggle('frozen',crit);
+  document.getElementById('frozenMsg').classList.toggle('show',crit);
+}
+function updProg(){
+  const done=REQ.filter(k=>answers[k]!==undefined).length;
+  const pct=Math.round((done/11)*100);
+  document.getElementById('pb').style.width=pct+'%';
+  document.getElementById('plbl').textContent=done+' / 11 completed';
+}
+function updSub(){
+  if(hasCrit()){
+    // any 1 critical flag = submit unlocked immediately
+    document.getElementById('subBtn').disabled=false;
+  } else {
+    const cr=['n2','n3','n4'].filter(k=>answers[k]==='yes').map(k=>k+'b');
+    document.getElementById('subBtn').disabled=[...REQ,...cr].some(k=>answers[k]===undefined);
+  }
+}
+
+function submitForm(){
+  const name=document.getElementById('dName').value.trim();
+  const now=new Date();
+  const ds=now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const ts=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+
+  if(hasCrit()){
+    const flags=
+      (answers['c1']==='no' ?'✗ Driver NOT feeling okay to drive\n':'')+
+      (answers['c2']==='yes'?'✗ Driver reported INTOXICATED\n':'')+
+      (answers['c3']==='yes'?'✗ Driver UNDER THE INFLUENCE\n':'');
+
+    emailjs.send('service_gswv66u','template_ywt9xe9',{
+      driver: name,
+      vehicle: vehicle.num+' ('+vehicle.type+')',
+      date: ds,
+      time: ts,
+      flags: flags
+    }).then(function(resp){
+      console.log('Alert sent OK:', resp.status, resp.text);
+    }).catch(function(err){
+      console.error('EmailJS error:', JSON.stringify(err));
+      alert('Email alert failed: '+JSON.stringify(err));
+    });
+  }
+
+  document.getElementById('mainApp').style.display='none';
+  document.getElementById('succScr').classList.add('show');
+  if(hasCrit()){
+    document.getElementById('sico').textContent='⚠️';
+    document.getElementById('stit').textContent='Alert Sent';
+    document.getElementById('ssub').textContent=name+' — '+vehicle.num+' — '+ts+'. Do NOT depart. Contact dispatch immediately.';
+    const f=document.getElementById('sflag');f.style.display='';
+    f.innerHTML='<strong>⚠ Critical Issue Flagged</strong>'+(answers['c1']==='no'?'• Driver not feeling okay to drive<br/>':'')+(answers['c2']==='yes'?'• Driver reported intoxication<br/>':'')+(answers['c3']==='yes'?'• Driver under the influence<br/>':'')+'<br/>Alert sent to: sherin@rdsdelivery.com';
+  } else {
+    document.getElementById('sico').textContent='✅';
+    document.getElementById('stit').textContent='All Clear';
+    document.getElementById('ssub').textContent=name+' — '+vehicle.num+' cleared for departure at '+ts+'.';
+  }
+}
+
+function reset(){
+  answers={};vehicle=null;
+  document.getElementById('mainApp').style.display='';
+  document.getElementById('succScr').classList.remove('show');
+  document.getElementById('dName').value='';
+  vs.value='';renderFleet();
+  document.getElementById('vSW').style.display='';
+  document.getElementById('selV').classList.remove('show');
+  document.getElementById('clf').style.display='none';
+  document.getElementById('crAlert').classList.remove('show');
+  document.getElementById('nonCritCard').classList.remove('frozen');
+  document.getElementById('frozenMsg').classList.remove('show');
+  document.getElementById('pb').style.width='0%';
+  document.getElementById('plbl').textContent='0 / 11 completed';
+  document.getElementById('subBtn').disabled=true;
+  document.getElementById('sflag').style.display='none';
+  ['s1','s2','s3'].forEach(s=>{document.getElementById(s).className='step';});
+  document.getElementById('s1').classList.add('active');
+  document.querySelectorAll('.ci').forEach(c=>c.classList.remove('flagged','cleared'));
+  document.querySelectorAll('.yn').forEach(b=>b.classList.remove('ay','an'));
+  document.querySelectorAll('.subq').forEach(s=>s.classList.remove('show'));
+}
+</script>
+</body>
+</html>
