@@ -367,7 +367,7 @@ function submitForm(){
       (answers['c2']==='yes'?'✗ Driver reported INTOXICATED\n':'')+
       (answers['c3']==='yes'?'✗ Driver UNDER THE INFLUENCE\n':'');
 
-    emailjs.send('service_gswv66u','template_ywt9xe9',{
+    emailjs.send('service_gswv66u','ywt9xe9',{
       driver: name,
       vehicle: vehicle.num+' ('+vehicle.type+')',
       date: ds,
